@@ -21,7 +21,11 @@ const ThemeToggle = () => {
     dispatch(toggleTheme());
   };
 
-  useEffect(() => {}, [theme]);
+  useEffect(() => {
+    if (!document.body.classList.contains("dark") && theme === "dark") {
+      document.body.classList.add("dark");
+    }
+  }, []);
 
   return (
     <motion.button
