@@ -44,7 +44,7 @@ const LoginPromptModal = ({ isOpen, onClose }: LoginPromptModalProps) => {
             exit="exit"
           >
             <motion.div
-              className="bg-white rounded-xl shadow-xl max-w-md w-full overflow-hidden"
+              className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full overflow-hidden"
               variants={modalVariants}
               initial="hidden"
               animate="visible"
@@ -68,7 +68,7 @@ const LoginPromptModal = ({ isOpen, onClose }: LoginPromptModalProps) => {
                   </div>
                 </div>
 
-                <p className="text-center text-gray-700 mb-6">
+                <p className="text-center text-gray-700 mb-6 dark:text-gray-300">
                   You need to sign in to access this feature. Create an account
                   to track your progress and get personalized interview
                   recommendations.

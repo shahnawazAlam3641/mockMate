@@ -62,7 +62,7 @@ const Home: React.FC = () => {
       <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         {isAuthenticated && userInterviews.length > 0 && (
           <div className="mb-16">
-            <h2 className="text-2xl font-heading font-bold text-gray-900 mb-6">
+            <h2 className="text-2xl font-heading font-bold text-gray-900 mb-6 dark:text-white">
               Your Interviews
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -84,7 +84,7 @@ const Home: React.FC = () => {
         )}
 
         <div>
-          <h2 className="text-2xl font-heading font-bold text-gray-900 mb-6">
+          <h2 className="text-2xl font-heading font-bold text-gray-900 mb-6 dark:text-white">
             {isAuthenticated ? "Interviews by Others" : "Popular Interviews"}
           </h2>
           {loading ? (
@@ -116,7 +116,7 @@ const Home: React.FC = () => {
               ))}
             </div>
           ) : (
-            <div className="text-center text-gray-500">
+            <div className="text-center text-gray-500 dark:text-white">
               No interviews available.
             </div>
           )}
