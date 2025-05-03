@@ -2,14 +2,17 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { motion } from "motion/react";
+import axios from "axios";
 
 import { AlertCircle, Cpu } from "lucide-react";
 import { RootState } from "../../redux/store";
 import {
+  clearError,
   loginFailure,
   loginStart,
   loginSuccess,
 } from "../../redux/slices/authSlice";
+import { BACKEND_URL } from "../../utils/constants";
 
 const SignIn = () => {
   const [formData, setFormData] = useState({
@@ -31,11 +34,20 @@ const SignIn = () => {
 
     try {
       dispatch(loginStart());
-      const userData = await signIn(formData.email, formData.password);
-      dispatch(loginSuccess(userData));
+      dispatch(clearError());
+      const response = await axios.post(`${BACKEND_URL}/auth/login`, {
+        email: formData.email,
+        password: formData.password,
+      });
+
+      console.log(response);
+
+      // const userData = await signIn(formData.email, formData.password);
+      dispatch(loginSuccess(response.data.user));
       navigate("/");
-    } catch (err) {
-      dispatch(loginFailure((err as Error).message));
+    } catch (err: any) {
+      console.log(err);
+      dispatch(loginFailure(err?.response?.data.message));
     }
   };
 
@@ -66,11 +78,16 @@ const SignIn = () => {
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
             className="mt-2 text-sm text-gray-600"
+            onClick={() => {
+              console.log("clear error");
+              clearError();
+            }}
           >
             Or{" "}
             <Link
               to="/signup"
               className="font-medium text-primary-600 hover:text-primary-500"
+              onClick={() => dispatch(clearError())}
             >
               create a new account
             </Link>

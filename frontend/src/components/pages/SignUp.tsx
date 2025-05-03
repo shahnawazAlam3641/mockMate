@@ -5,12 +5,15 @@ import { motion } from "motion/react";
 import { AlertCircle, Cpu } from "lucide-react";
 import { RootState } from "../../redux/store";
 import {
+  clearError,
   registerFailure,
   registerStart,
   registerSuccess,
 } from "../../redux/slices/authSlice";
+import axios from "axios";
+import { BACKEND_URL } from "../../utils/constants";
 
-const SignUp: React.FC = () => {
+const SignUp = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -35,6 +38,7 @@ const SignUp: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    dispatch(clearError());
 
     // Validate passwords match
     if (formData.password !== formData.confirmPassword) {
@@ -44,15 +48,24 @@ const SignUp: React.FC = () => {
 
     try {
       dispatch(registerStart());
-      const userData = await signUp(
-        formData.name,
-        formData.email,
-        formData.password
-      );
-      dispatch(registerSuccess(userData));
-      navigate("/");
-    } catch (err) {
-      dispatch(registerFailure((err as Error).message));
+      const response = await axios.post(`${BACKEND_URL}/auth/register`, {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+      });
+
+      console.log(response);
+
+      // const userData = await signUp(
+      //   formData.name,
+      //   formData.email,
+      //   formData.password
+      // );
+      dispatch(registerSuccess(response.data.user));
+      // navigate("/");
+    } catch (err: any) {
+      console.log(err);
+      dispatch(registerFailure(err.response.data.message));
     }
   };
 
@@ -88,6 +101,7 @@ const SignUp: React.FC = () => {
             <Link
               to="/signin"
               className="font-medium text-primary-600 hover:text-primary-500"
+              onClick={() => clearError()}
             >
               Sign in
             </Link>

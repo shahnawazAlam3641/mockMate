@@ -3,6 +3,7 @@ import { z } from "zod";
 import User from "../models/User";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { auth } from "../middlewares/auth";
 
 const router = express.Router();
 
@@ -110,7 +111,7 @@ router.post("/login", async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const isPasswordRight = bcrypt.compare(password, user.password);
+    const isPasswordRight = await bcrypt.compare(password, user.password);
 
     if (!isPasswordRight) {
       res.status(401).json({
@@ -144,6 +145,39 @@ router.post("/login", async (req: Request, res: Response): Promise<void> => {
       error,
     });
     console.log(error);
+  }
+});
+
+router.get("/me", auth, async (req: Request, res: Response): Promise<void> => {
+  try {
+    const user = await User.findById(req.userId).select("-password");
+
+    if (!user) {
+      res.status(404).json({
+        success: false,
+        message: "Something went wrong",
+      });
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Fetched details successfully",
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        token: req.token,
+      },
+    });
+    return;
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Something went wrong while Logging in",
+      error,
+    });
   }
 });
 

@@ -2,10 +2,17 @@ import { Link, useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
 import { Menu, X, Cpu } from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { RootState } from "../../redux/store";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../../redux/slices/authSlice";
+import {
+  loginFailure,
+  loginStart,
+  loginSuccess,
+  logout,
+} from "../../redux/slices/authSlice";
+import axios from "axios";
+import { BACKEND_URL } from "../../utils/constants";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -20,6 +27,30 @@ const Navbar = () => {
     dispatch(logout());
     navigate("/");
   };
+
+  const fetchUserDetails = async () => {
+    try {
+      dispatch(loginStart());
+      const response = await axios.get(`${BACKEND_URL}/auth/me`, {
+        headers: {
+          Authorisation: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      dispatch(loginSuccess(response.data.user));
+    } catch (error: any) {
+      dispatch(loginFailure(error?.response?.data.message));
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    console.log(localStorage.getItem("token"), !user?.id);
+    if (localStorage.getItem("token") && !user?.id) {
+      console.log("first");
+      fetchUserDetails();
+    }
+  }, []);
 
   return (
     <nav className="bg-white dark:bg-gray-900 shadow-sm">

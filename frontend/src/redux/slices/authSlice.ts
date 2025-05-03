@@ -64,6 +64,7 @@ const authSlice = createSlice({
       localStorage.removeItem("token");
     },
     clearError: (state) => {
+      console.log("first");
       state.error = null;
     },
   },
