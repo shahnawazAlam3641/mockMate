@@ -8,6 +8,7 @@ import mongoose from "mongoose";
 const router = express.Router();
 
 const createInterviewSchema = z.object({
+  userid: z.string(),
   jobRole: z
     .string()
     .min(3, "role must be at least 3 characters")
@@ -24,7 +25,7 @@ const createInterviewSchema = z.object({
 //create interview
 router.post(
   "/generateInterview",
-  auth,
+
   async (req: Request, res: Response): Promise<void> => {
     try {
       const result = createInterviewSchema.safeParse(req.body);
@@ -42,6 +43,7 @@ router.post(
       }
 
       const {
+        userid,
         jobRole,
         experienceLevel,
         techStack,
@@ -68,7 +70,7 @@ router.post(
       //   console.log(JSON.parse(questions));
 
       const interview = await Interview.create({
-        createdBy: req.userId,
+        createdBy: userid,
         jobRole,
         experienceLevel,
         techStack: techStack.split(","),
