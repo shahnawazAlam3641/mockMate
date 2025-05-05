@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { X, MessageCircle, FileText } from "lucide-react";
@@ -10,6 +10,10 @@ import {
   ExperienceLevel,
   InterviewType,
 } from "../../redux/slices/interviewSlice";
+import axios from "axios";
+import { BACKEND_URL } from "../../utils/constants";
+import { RootState } from "../../redux/store";
+import Interview from "../pages/Interview";
 
 interface CreateInterviewModalProps {
   isOpen: boolean;
@@ -22,6 +26,8 @@ const CreateInterviewModal: React.FC<CreateInterviewModalProps> = ({
   isOpen,
   onClose,
 }) => {
+  const { user } = useSelector((state: RootState) => state.auth);
+
   const [step, setStep] = useState<ModalStep>("selection");
   const [formData, setFormData] = useState({
     jobRole: "",
@@ -30,6 +36,7 @@ const CreateInterviewModal: React.FC<CreateInterviewModalProps> = ({
     interviewType: InterviewType.Technical,
     numberOfQuestions: 5,
   });
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -55,18 +62,23 @@ const CreateInterviewModal: React.FC<CreateInterviewModalProps> = ({
       dispatch(createInterviewStart());
 
       // Convert techStack string to array
-      const techStackArray = formData.techStack
-        .split(",")
-        .map((item) => item.trim());
+      // const techStackArray = formData.techStack
+      //   .split(",")
+      //   .map((item) => item.trim());
 
-      const newInterview = await createInterview({
-        ...formData,
-        techStack: techStackArray,
-      });
+      const response = await axios.post(
+        `${BACKEND_URL}/interview/generateInterview`,
+        { ...formData },
+        {
+          headers: {
+            Authorisation: `Bearer ${user?.token}`,
+          },
+        }
+      );
 
-      dispatch(createInterviewSuccess(newInterview));
+      dispatch(createInterviewSuccess(response.data.interview));
       onClose();
-      navigate(`/interview/${newInterview.id}`);
+      navigate(`/interview/${response.data.interview._id}`);
     } catch (err) {
       const errorMessage =
         (err as Error).message || "Failed to create interview";
@@ -303,7 +315,7 @@ const CreateInterviewModal: React.FC<CreateInterviewModalProps> = ({
 
                 {step === "chat" && (
                   <div className="space-y-6">
-                    <ChatWithAI />
+                    <Interview />
                   </div>
                 )}
               </div>

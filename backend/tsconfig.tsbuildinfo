@@ -1,1 +1,1 @@
-{"root":["./src/index.ts","./src/config/db.ts","./src/middlewares/auth.ts","./src/models/user.ts","./src/routes/auth.ts","./src/types/express.d.ts","./src/types/index.ts"],"version":"5.8.3"}
+{"root":["./src/index.ts","./src/config/db.ts","./src/config/gemini.ts","./src/middlewares/auth.ts","./src/models/interview.ts","./src/models/user.ts","./src/routes/auth.ts","./src/routes/interview.ts","./src/types/express.d.ts","./src/types/index.ts"],"version":"5.8.3"}

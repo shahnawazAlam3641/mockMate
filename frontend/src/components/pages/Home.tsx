@@ -3,39 +3,78 @@ import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { motion } from "motion/react";
 import { RootState } from "../../redux/store";
-import {
-  fetchInterviewsFailure,
-  fetchInterviewsStart,
-  fetchInterviewsSuccess,
-} from "../../redux/slices/interviewSlice";
+
 import Hero from "../home/Hero";
 import InterviewCard from "../home/InterviewCard";
 import CreateInterviewModal from "../home/CreateInterviewModal";
 import LoginPromptModal from "../home/LoginPromptModal";
+import {
+  fetchCurrentUserInterviewsFailure,
+  fetchCurrentUserInterviewsStart,
+  fetchCurrentUserInterviewsSuccess,
+  fetchOtherUserInterviewsFailure,
+  fetchOtherUserInterviewsStart,
+  fetchOtherUserInterviewsSuccess,
+} from "../../redux/slices/interviewSlice";
+import axios from "axios";
+import { BACKEND_URL } from "../../utils/constants";
 
 const Home: React.FC = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
-  const { interviews, loading, error } = useSelector(
-    (state: RootState) => state.interview
+  const { isAuthenticated, user } = useSelector(
+    (state: RootState) => state.auth
   );
+  const {
+    currentUserInterviews,
+    otherUserInterviews,
+    otherUserLoading,
+    otherUserError,
+  } = useSelector((state: RootState) => state.interview);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const loadInterviews = async () => {
-      try {
-        dispatch(fetchInterviewsStart());
-        const data = await fetchInterviews();
-        dispatch(fetchInterviewsSuccess(data));
-      } catch (error) {
-        dispatch(fetchInterviewsFailure((error as Error).message));
-      }
-    };
+  const getCurrentUserInterviews = async () => {
+    try {
+      dispatch(fetchCurrentUserInterviewsStart());
 
-    loadInterviews();
-  }, []);
+      const response = await axios.get(
+        `${BACKEND_URL}/interview/getUserInterviews`,
+        { headers: { Authorisation: `Bearer ${user?.token}` } }
+      );
+      dispatch(fetchCurrentUserInterviewsSuccess(response.data.interviews));
+    } catch (error) {
+      dispatch(fetchCurrentUserInterviewsFailure((error as Error).message));
+    }
+  };
+
+  const getAllInterviews = async () => {
+    try {
+      dispatch(fetchOtherUserInterviewsStart());
+
+      const response = await axios.post(
+        `${BACKEND_URL}/interview/getAll`,
+        { userId: user?._id },
+        {
+          headers: { Authorisation: `Bearer ${user?.token}` },
+        }
+      );
+
+      dispatch(fetchOtherUserInterviewsSuccess(response.data.interviews));
+    } catch (error) {
+      dispatch(fetchOtherUserInterviewsFailure((error as Error).message));
+    }
+  };
+
+  useEffect(() => {
+    if (user?.token && !(currentUserInterviews.length > 0)) {
+      getCurrentUserInterviews();
+    }
+
+    if (!(otherUserInterviews.length > 0)) {
+      getAllInterviews();
+    }
+  }, [user?.token]);
 
   const handleCreateInterview = () => {
     if (isAuthenticated) {
@@ -45,28 +84,18 @@ const Home: React.FC = () => {
     }
   };
 
-  const userInterviews = interviews.filter(
-    (interview) => isAuthenticated && interview.createdBy === "currentUser"
-  );
-
-  const otherInterviews = interviews.filter(
-    (interview) =>
-      interview.isPublic &&
-      (!isAuthenticated || interview.createdBy !== "currentUser")
-  );
-
   return (
     <div className="min-h-screen">
       <Hero onCreateInterview={handleCreateInterview} />
 
       <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        {isAuthenticated && userInterviews.length > 0 && (
+        {isAuthenticated && currentUserInterviews.length > 0 && (
           <div className="mb-16">
             <h2 className="text-2xl font-heading font-bold text-gray-900 mb-6 dark:text-white">
               Your Interviews
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {userInterviews.map((interview) => (
+              {currentUserInterviews.map((interview) => (
                 <motion.div
                   key={interview.id}
                   initial={{ opacity: 0, y: 20 }}
@@ -87,15 +116,15 @@ const Home: React.FC = () => {
           <h2 className="text-2xl font-heading font-bold text-gray-900 mb-6 dark:text-white">
             {isAuthenticated ? "Interviews by Others" : "Popular Interviews"}
           </h2>
-          {loading ? (
+          {otherUserLoading ? (
             <div className="flex justify-center">
               <div className="loader"></div>
             </div>
-          ) : error ? (
-            <div className="text-center text-error-600">{error}</div>
-          ) : otherInterviews.length > 0 ? (
+          ) : otherUserError ? (
+            <div className="text-center text-error-600">{otherUserError}</div>
+          ) : otherUserInterviews.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {otherInterviews.map((interview) => (
+              {otherUserInterviews.map((interview) => (
                 <motion.div
                   key={interview.id}
                   initial={{ opacity: 0, y: 20 }}

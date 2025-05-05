@@ -25,50 +25,90 @@ export interface Interview {
 }
 
 interface InterviewState {
-  interviews: Interview[];
+  currentUserInterviews: Interview[];
+  otherUserInterviews: Interview[];
   currentInterview: Interview | null;
-  loading: boolean;
-  error: string | null;
+  currentUserLoading: boolean;
+  otherUserLoading: boolean;
+  createInterviewLoading: boolean;
+  currentUserError: string | null;
+  otherUserError: string | null;
+  createInterviewError: string | null;
 }
 
 const initialState: InterviewState = {
-  interviews: [],
+  currentUserInterviews: [],
+  otherUserInterviews: [],
   currentInterview: null,
-  loading: false,
-  error: null,
+  currentUserLoading: false,
+  otherUserLoading: false,
+  createInterviewLoading: false,
+  currentUserError: null,
+  otherUserError: null,
+  createInterviewError: null,
 };
 
 const interviewSlice = createSlice({
   name: "interview",
   initialState,
   reducers: {
-    fetchInterviewsStart: (state) => {
-      state.loading = true;
-      state.error = null;
+    fetchCurrentUserInterviewsStart: (state) => {
+      state.currentUserLoading = true;
+      state.currentUserError = null;
     },
-    fetchInterviewsSuccess: (state, action: PayloadAction<Interview[]>) => {
-      state.interviews = action.payload;
-      state.loading = false;
+
+    fetchOtherUserInterviewsStart: (state) => {
+      state.otherUserLoading = true;
+      state.otherUserError = null;
     },
-    fetchInterviewsFailure: (state, action: PayloadAction<string>) => {
-      state.loading = false;
-      state.error = action.payload;
+
+    fetchCurrentUserInterviewsSuccess: (
+      state,
+      action: PayloadAction<Interview[]>
+    ) => {
+      state.currentUserInterviews = action.payload;
+      state.currentUserLoading = false;
     },
+
+    fetchOtherUserInterviewsSuccess: (
+      state,
+      action: PayloadAction<Interview[]>
+    ) => {
+      state.otherUserInterviews = action.payload;
+      state.otherUserLoading = false;
+    },
+
+    fetchCurrentUserInterviewsFailure: (
+      state,
+      action: PayloadAction<string>
+    ) => {
+      state.currentUserLoading = false;
+      state.currentUserError = action.payload;
+    },
+
+    fetchOtherUserInterviewsFailure: (state, action: PayloadAction<string>) => {
+      state.otherUserLoading = false;
+      state.otherUserError = action.payload;
+    },
+
     createInterviewStart: (state) => {
-      state.loading = true;
-      state.error = null;
+      state.createInterviewLoading = true;
+      state.createInterviewError = null;
     },
+
     createInterviewSuccess: (state, action: PayloadAction<Interview>) => {
-      state.interviews.push(action.payload);
-      state.loading = false;
+      state.currentUserInterviews.push(action.payload);
+      state.createInterviewLoading = false;
     },
     createInterviewFailure: (state, action: PayloadAction<string>) => {
-      state.loading = false;
-      state.error = action.payload;
+      state.createInterviewLoading = false;
+      state.createInterviewError = action.payload;
     },
+
     setCurrentInterview: (state, action: PayloadAction<Interview | null>) => {
       state.currentInterview = action.payload;
     },
+
     startInterview: (state) => {
       if (state.currentInterview) {
         // logic
@@ -78,16 +118,21 @@ const interviewSlice = createSlice({
       console.log(state);
       // logic
     },
+
     clearInterviewError: (state) => {
-      state.error = null;
+      state.currentUserError = null;
+      state.otherUserError = null;
     },
   },
 });
 
 export const {
-  fetchInterviewsStart,
-  fetchInterviewsSuccess,
-  fetchInterviewsFailure,
+  fetchCurrentUserInterviewsStart,
+  fetchOtherUserInterviewsStart,
+  fetchCurrentUserInterviewsSuccess,
+  fetchOtherUserInterviewsSuccess,
+  fetchCurrentUserInterviewsFailure,
+  fetchOtherUserInterviewsFailure,
   createInterviewStart,
   createInterviewSuccess,
   createInterviewFailure,
