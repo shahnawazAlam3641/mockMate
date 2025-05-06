@@ -13,7 +13,6 @@ import {
 import axios from "axios";
 import { BACKEND_URL } from "../../utils/constants";
 import { RootState } from "../../redux/store";
-import Interview from "../pages/Interview";
 
 interface CreateInterviewModalProps {
   isOpen: boolean;
@@ -68,7 +67,7 @@ const CreateInterviewModal: React.FC<CreateInterviewModalProps> = ({
 
       const response = await axios.post(
         `${BACKEND_URL}/interview/generateInterview`,
-        { ...formData },
+        { ...formData, userid: user?._id },
         {
           headers: {
             Authorisation: `Bearer ${user?.token}`,
@@ -314,9 +313,7 @@ const CreateInterviewModal: React.FC<CreateInterviewModalProps> = ({
                 )}
 
                 {step === "chat" && (
-                  <div className="space-y-6">
-                    <Interview />
-                  </div>
+                  <div className="space-y-6">{/* <ChatWithAI /> */}</div>
                 )}
               </div>
             </motion.div>

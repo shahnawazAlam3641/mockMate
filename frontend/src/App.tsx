@@ -19,7 +19,7 @@ function App() {
             path="interview/:id"
             element={
               // <ProtectedRoute>
-              <Interview />
+              <Interview type="interview" />
               // </ProtectedRoute>
             }
           />

@@ -13,7 +13,7 @@ export enum InterviewType {
 }
 
 export interface Interview {
-  id: string;
+  _id: string;
   jobRole: string;
   experienceLevel: ExperienceLevel;
   techStack: string[];
@@ -21,16 +21,18 @@ export interface Interview {
   numberOfQuestions: number;
   createdBy: string;
   createdAt: string;
-  isPublic: boolean;
+  questions: string[];
 }
 
 interface InterviewState {
   currentUserInterviews: Interview[];
   otherUserInterviews: Interview[];
   currentInterview: Interview | null;
+  currentInterviewLoading: boolean;
   currentUserLoading: boolean;
   otherUserLoading: boolean;
   createInterviewLoading: boolean;
+  currentInterviewError: string | null;
   currentUserError: string | null;
   otherUserError: string | null;
   createInterviewError: string | null;
@@ -40,9 +42,11 @@ const initialState: InterviewState = {
   currentUserInterviews: [],
   otherUserInterviews: [],
   currentInterview: null,
+  currentInterviewLoading: false,
   currentUserLoading: false,
   otherUserLoading: false,
   createInterviewLoading: false,
+  currentInterviewError: null,
   currentUserError: null,
   otherUserError: null,
   createInterviewError: null,
@@ -100,13 +104,22 @@ const interviewSlice = createSlice({
       state.currentUserInterviews.push(action.payload);
       state.createInterviewLoading = false;
     },
+
     createInterviewFailure: (state, action: PayloadAction<string>) => {
       state.createInterviewLoading = false;
       state.createInterviewError = action.payload;
     },
 
     setCurrentInterview: (state, action: PayloadAction<Interview | null>) => {
+      console.log("current interview");
       state.currentInterview = action.payload;
+    },
+
+    setCurrentInterviewLoading: (state, action) => {
+      state.currentInterviewLoading = action.payload;
+    },
+    setCurrentInterviewError: (state, action) => {
+      state.currentInterviewError = action.payload;
     },
 
     startInterview: (state) => {
@@ -114,6 +127,7 @@ const interviewSlice = createSlice({
         // logic
       }
     },
+
     endInterview: (state) => {
       console.log(state);
       // logic
@@ -137,6 +151,8 @@ export const {
   createInterviewSuccess,
   createInterviewFailure,
   setCurrentInterview,
+  setCurrentInterviewLoading,
+  setCurrentInterviewError,
   startInterview,
   endInterview,
   clearInterviewError,

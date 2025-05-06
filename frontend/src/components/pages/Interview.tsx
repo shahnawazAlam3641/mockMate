@@ -1,77 +1,162 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { motion } from "motion/react";
 import { RootState } from "../../redux/store";
 import {
-  endInterview,
   setCurrentInterview,
-  startInterview,
+  setCurrentInterviewError,
+  setCurrentInterviewLoading,
 } from "../../redux/slices/interviewSlice";
 import InterviewBox from "../interview/InterviewBox";
 import SubtitlesArea from "../interview/SubtitlesArea";
 import ControlPanel from "../interview/ControlPanel";
+import { Message } from "../../types/vapi";
+import { vapi } from "../../utils/vapi";
+import { BACKEND_URL, interviewer } from "../../utils/constants";
+import axios from "axios";
 
-const Interview = () => {
+enum CallStatus {
+  INACTIVE = "INACTIVE",
+  CONNECTING = "CONNECTING",
+  ACTIVE = "ACTIVE",
+  FINISHED = "FINISHED",
+}
+
+interface SavedMessage {
+  role: "user" | "system" | "assistant";
+  content: string;
+}
+
+const Interview = ({ type }: { type: string }) => {
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [callStatus, setCallStatus] = useState<CallStatus>(CallStatus.INACTIVE);
+  const [messages, setMessages] = useState<SavedMessage[]>([]);
+  const { user } = useSelector((state: RootState) => state.auth);
+
   const { id } = useParams<{ id: string }>();
-  const { currentInterview, loading, error } = useSelector(
-    (state: RootState) => state.interview
-  );
-
-  const [interviewStarted, setInterviewStarted] = useState(false);
-  const [interviewComplete, setInterviewComplete] = useState(false);
-  const [activeSpeaker, setActiveSpeaker] = useState<
-    "interviewer" | "interviewee" | null
-  >(null);
-  const [currentSubtitle, setCurrentSubtitle] = useState<string>("");
-  const [transcription, setTranscription] = useState<string[]>([]);
+  const { currentInterview, currentInterviewLoading, currentInterviewError } =
+    useSelector((state: RootState) => state.interview);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const loadInterview = async () => {
-      try {
-        if (id) {
-          const interview = await fetchInterview(id);
-          dispatch(setCurrentInterview(interview));
-        }
-      } catch (error) {
-        console.error("Failed to fetch interview:", error);
+    const onCallStart = () => setCallStatus(CallStatus.ACTIVE);
+    const onCallEnd = () => setCallStatus(CallStatus.FINISHED);
+
+    const onMessage = (message: Message) => {
+      if (message.type === "transcript" && message.transcriptType === "final") {
+        const newMessage = {
+          role: message.role,
+          content: message.transcript,
+        };
+
+        setMessages((prev) => [...prev, newMessage]);
       }
     };
 
-    loadInterview();
+    const onSpeechStart = () => setIsSpeaking(true);
+    const onSpeechEnd = () => setIsSpeaking(false);
+    const onError = (error: Error) => {
+      console.log("Error: ", error);
+    };
+
+    vapi.on("call-start", onCallStart);
+    vapi.on("call-end", onCallEnd);
+    vapi.on("message", onMessage);
+    vapi.on("speech-start", onSpeechStart);
+    vapi.on("speech-end", onSpeechEnd);
+    vapi.on("error", onError);
 
     return () => {
-      if (interviewStarted && !interviewComplete) {
-        //cleanup for incomplete interviews
+      vapi.off("call-start", onCallStart);
+      vapi.off("call-end", onCallEnd);
+      vapi.off("message", onMessage);
+      vapi.off("speech-start", onSpeechStart);
+      vapi.off("speech-end", onSpeechEnd);
+      vapi.off("error", onError);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleGenerateFeedback = async (messages: SavedMessage[]) => {
+      console.log(messages);
+      console.log("generate feedback");
+    };
+
+    if (callStatus === CallStatus.FINISHED) {
+      if (type === "generate") {
+        navigate("/");
+      } else if (type === "interview") {
+        handleGenerateFeedback(messages);
+      }
+    }
+  }, [messages, callStatus, type, user?._id]);
+
+  useEffect(() => {
+    const fetchInterview = async () => {
+      try {
+        dispatch(setCurrentInterviewLoading(true));
+        const response = await axios.get(`${BACKEND_URL}/interview/${id}`, {
+          headers: { Authorisation: `Bearer ${user?.token}` },
+        });
+
+        dispatch(setCurrentInterview(response.data.interview));
+        dispatch(setCurrentInterviewLoading(false));
+        dispatch(setCurrentInterviewError(null));
+      } catch (error) {
+        dispatch(setCurrentInterviewLoading(false));
+        dispatch(setCurrentInterviewError((error as Error).message));
+        console.log(error);
       }
     };
-  }, [id]);
-
-  const handleStartInterview = () => {
-    dispatch(startInterview());
-    setInterviewStarted(true);
-    simulateInterview();
-  };
-
-  const handleEndInterview = async () => {
-    try {
-      dispatch(endInterview());
-      setInterviewComplete(true);
-      setActiveSpeaker(null);
-
-      if (id) {
-        await completeInterview(id, transcription);
-        navigate(`/feedback/${id}`);
-      }
-    } catch (error) {
-      console.error("Failed to complete interview:", error);
+    if (!currentInterview && user?.token) {
+      fetchInterview();
     }
+  }, [currentInterview, user?.token]);
+
+  const handleCall = async () => {
+    setCallStatus(CallStatus.CONNECTING);
+
+    if (type === "generate") {
+      await vapi.start(import.meta.env.VITE_VAPI_ASSISTANT_ID, {
+        variableValues: {
+          username: user?.name,
+          userid: user?._id,
+        },
+      });
+    } else if (type === "interview") {
+      let formattedQuestions = "";
+
+      if (currentInterview?.questions) {
+        formattedQuestions = currentInterview?.questions
+          .map((question) => {
+            return `- ${question}`;
+          })
+          .join("\n");
+      }
+
+      await vapi.start(interviewer, {
+        variableValues: {
+          questions: formattedQuestions,
+        },
+      });
+    }
+
+    setCallStatus(CallStatus.ACTIVE);
   };
 
-  if (loading && !currentInterview) {
+  const handleDisconnect = async () => {
+    setCallStatus(CallStatus.FINISHED);
+
+    vapi.stop();
+  };
+
+  const isCallInactiveOrFinished =
+    callStatus === CallStatus.INACTIVE || callStatus === CallStatus.FINISHED;
+
+  if (currentInterviewLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-600"></div>
@@ -79,32 +164,12 @@ const Interview = () => {
     );
   }
 
-  if (error) {
+  if (currentInterviewError) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="bg-error-100 text-error-800 p-4 rounded-md max-w-md text-center">
           <h3 className="font-bold text-lg mb-2">Error</h3>
-          <p>{error}</p>
-          <button
-            onClick={() => navigate("/")}
-            className="mt-4 btn btn-primary"
-          >
-            Return to Home
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  if (!currentInterview) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="bg-warning-100 text-warning-800 p-4 rounded-md max-w-md text-center">
-          <h3 className="font-bold text-lg mb-2">Interview Not Found</h3>
-          <p>
-            The interview you requested could not be found. Please check the URL
-            and try again.
-          </p>
+          <p>{currentInterviewError}</p>
           <button
             onClick={() => navigate("/")}
             className="mt-4 btn btn-primary"
@@ -127,42 +192,42 @@ const Interview = () => {
           <div className="bg-white shadow-md rounded-xl overflow-hidden">
             <div className="p-6 bg-primary-900 text-white">
               <h1 className="text-2xl font-bold font-heading">
-                {currentInterview.jobRole} Interview
+                {currentInterview?.jobRole} Interview
               </h1>
               <p className="text-primary-200">
-                {currentInterview.interviewType} •{" "}
-                {currentInterview.experienceLevel} •{" "}
-                {currentInterview.numberOfQuestions} Questions
+                {currentInterview?.interviewType} •{" "}
+                {currentInterview?.experienceLevel} •{" "}
+                {currentInterview?.numberOfQuestions} Questions
               </p>
             </div>
 
             <div className="p-6">
-              {interviewStarted ? (
+              {callStatus === CallStatus.ACTIVE ? (
                 <div className="space-y-8">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <InterviewBox
                       type="interviewer"
-                      isActive={activeSpeaker === "interviewer"}
+                      isActive={isSpeaking}
                       name="AI Interviewer"
                       avatarUrl="https://images.pexels.com/photos/5380642/pexels-photo-5380642.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
                     />
 
                     <InterviewBox
                       type="interviewee"
-                      isActive={activeSpeaker === "interviewee"}
+                      isActive={!isSpeaking}
                       name="You"
                       avatarUrl="https://images.pexels.com/photos/1987301/pexels-photo-1987301.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
                     />
                   </div>
 
                   <SubtitlesArea
-                    currentSubtitle={currentSubtitle}
-                    activeSpeaker={activeSpeaker}
+                    currentSubtitle={messages[messages.length - 1]?.content}
+                    isSpeaking={isSpeaking}
                   />
 
                   <ControlPanel
-                    onEndInterview={handleEndInterview}
-                    isComplete={interviewComplete}
+                    onEndInterview={handleDisconnect}
+                    isComplete={callStatus === CallStatus.FINISHED}
                   />
                 </div>
               ) : (
@@ -179,10 +244,13 @@ const Interview = () => {
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    onClick={handleStartInterview}
+                    onClick={handleCall}
                     className="btn btn-primary px-8 py-3"
+                    disabled={callStatus === CallStatus.CONNECTING}
                   >
-                    Start Interview
+                    {callStatus === CallStatus.CONNECTING
+                      ? "Starting..."
+                      : "Start Interview "}
                   </motion.button>
                 </div>
               )}

@@ -15,6 +15,7 @@ import {
   fetchOtherUserInterviewsFailure,
   fetchOtherUserInterviewsStart,
   fetchOtherUserInterviewsSuccess,
+  setCurrentInterview,
 } from "../../redux/slices/interviewSlice";
 import axios from "axios";
 import { BACKEND_URL } from "../../utils/constants";
@@ -97,14 +98,17 @@ const Home: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {currentUserInterviews.map((interview) => (
                 <motion.div
-                  key={interview.id}
+                  key={interview?._id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3 }}
                 >
                   <InterviewCard
                     interview={interview}
-                    onClick={() => navigate(`/interview/${interview.id}`)}
+                    onClick={() => {
+                      dispatch(setCurrentInterview(interview));
+                      navigate(`/interview/${interview?._id}`);
+                    }}
                   />
                 </motion.div>
               ))}
@@ -126,7 +130,7 @@ const Home: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {otherUserInterviews.map((interview) => (
                 <motion.div
-                  key={interview.id}
+                  key={interview?._id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: 0.1 }}
@@ -135,7 +139,8 @@ const Home: React.FC = () => {
                     interview={interview}
                     onClick={() => {
                       if (isAuthenticated) {
-                        navigate(`/interview/${interview.id}`);
+                        dispatch(setCurrentInterview(interview));
+                        navigate(`/interview/${interview?._id}`);
                       } else {
                         setIsLoginModalOpen(true);
                       }
