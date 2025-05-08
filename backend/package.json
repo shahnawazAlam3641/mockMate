@@ -12,8 +12,10 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@ai-sdk/google": "^1.2.15",
     "@google/genai": "^0.12.0",
     "@types/express": "^5.0.1",
+    "ai": "^4.3.13",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",

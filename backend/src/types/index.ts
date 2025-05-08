@@ -17,3 +17,24 @@ export interface InterviewDocument extends Document {
   createdBy: mongoose.Types.ObjectId;
   questions: string[];
 }
+
+export interface CategoryScore {
+  name:
+    | "Communication Skills"
+    | "Technical Knowledge"
+    | "Problem Solving"
+    | "Cultural Fit"
+    | "Confidence and Clarity";
+  score: number;
+  comment: string;
+}
+
+export interface FeedbackDocument extends Document {
+  interview: mongoose.Types.ObjectId;
+  user: mongoose.Types.ObjectId;
+  totalScore: number;
+  categoryScores: CategoryScore[];
+  strengths: string[];
+  areasForImprovement: string[];
+  finalAssessment: string;
+}

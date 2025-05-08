@@ -4,6 +4,7 @@ import cors from "cors";
 
 import authRoutes from "./routes/auth";
 import interviewRoutes from "./routes/interview";
+import feedbackRoutes from "./routes/feedback";
 import { connectDB } from "./config/db";
 
 dotenv.config();
@@ -26,6 +27,7 @@ app.get("/", (req, res): void => {
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/interview", interviewRoutes);
+app.use("/api/v1/feedback", feedbackRoutes);
 
 connectDB().then(() =>
   app.listen(PORT, () => console.log(`Server running on PORT ${PORT}`))

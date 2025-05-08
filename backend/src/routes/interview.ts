@@ -97,33 +97,37 @@ router.post(
 );
 
 //fetch interview
-router.get("/:id", auth, async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { id } = req.params;
+router.get(
+  "/get/:id",
+  auth,
+  async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { id } = req.params;
 
-    const interview = await Interview.findById(id);
+      const interview = await Interview.findById(id);
 
-    if (!interview) {
-      res.status(404).json({
+      if (!interview) {
+        res.status(404).json({
+          success: false,
+          message: "Interview not found",
+        });
+      }
+
+      res.status(200).json({
+        success: true,
+        message: "Fetched Interview Successfully",
+        interview,
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({
         success: false,
-        message: "Interview not found",
+        message: "Something went wrong while fetching interview details",
+        error,
       });
     }
-
-    res.status(200).json({
-      success: true,
-      message: "Fetched Interview Successfully",
-      interview,
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      success: false,
-      message: "Something went wrong while fetching interview details",
-      error,
-    });
   }
-});
+);
 
 //fetch current user interview
 router.get(
@@ -131,7 +135,9 @@ router.get(
   auth,
   async (req: Request, res: Response): Promise<void> => {
     try {
-      const interviews = await Interview.find({ createdBy: req.userId });
+      const interviews = await Interview.find({
+        createdBy: req.userId,
+      });
 
       if (!interviews) {
         res.status(404).json({

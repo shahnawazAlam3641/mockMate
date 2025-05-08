@@ -45,9 +45,8 @@ const Navbar = () => {
   };
 
   useEffect(() => {
-    console.log(localStorage.getItem("token"), !user?.id);
-    if (localStorage.getItem("token") && !user?.id) {
-      console.log("first");
+    console.log(localStorage.getItem("token"), !user?._id);
+    if (localStorage.getItem("token") && !user?._id) {
       fetchUserDetails();
     }
   }, []);

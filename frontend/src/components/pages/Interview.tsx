@@ -15,6 +15,11 @@ import { Message } from "../../types/vapi";
 import { vapi } from "../../utils/vapi";
 import { BACKEND_URL, interviewer } from "../../utils/constants";
 import axios from "axios";
+import {
+  fetchFeedbackFailure,
+  fetchFeedbackStart,
+  fetchFeedbackSuccess,
+} from "../../redux/slices/feedbackSlice";
 
 enum CallStatus {
   INACTIVE = "INACTIVE",
@@ -37,6 +42,8 @@ const Interview = ({ type }: { type: string }) => {
   const { id } = useParams<{ id: string }>();
   const { currentInterview, currentInterviewLoading, currentInterviewError } =
     useSelector((state: RootState) => state.interview);
+
+  const { loading } = useSelector((state: RootState) => state.feedback);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -81,8 +88,21 @@ const Interview = ({ type }: { type: string }) => {
 
   useEffect(() => {
     const handleGenerateFeedback = async (messages: SavedMessage[]) => {
-      console.log(messages);
-      console.log("generate feedback");
+      try {
+        dispatch(fetchFeedbackStart());
+
+        const response = await axios.post(
+          `${BACKEND_URL}/feedback/generate`,
+          { interviewId: currentInterview?._id, transcript: messages },
+          { headers: { Authorisation: `Bearer ${user?.token}` } }
+        );
+
+        dispatch(fetchFeedbackSuccess(response.data.feedback));
+        navigate(`/feedback/${response.data.feedback._id}`);
+      } catch (error) {
+        console.log(error);
+        dispatch(fetchFeedbackFailure((error as Error).message));
+      }
     };
 
     if (callStatus === CallStatus.FINISHED) {
@@ -98,7 +118,7 @@ const Interview = ({ type }: { type: string }) => {
     const fetchInterview = async () => {
       try {
         dispatch(setCurrentInterviewLoading(true));
-        const response = await axios.get(`${BACKEND_URL}/interview/${id}`, {
+        const response = await axios.get(`${BACKEND_URL}/interview/get/${id}`, {
           headers: { Authorisation: `Bearer ${user?.token}` },
         });
 
@@ -156,7 +176,7 @@ const Interview = ({ type }: { type: string }) => {
   const isCallInactiveOrFinished =
     callStatus === CallStatus.INACTIVE || callStatus === CallStatus.FINISHED;
 
-  if (currentInterviewLoading) {
+  if (currentInterviewLoading || loading) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-600"></div>
