@@ -77,12 +77,13 @@ const Interview = ({ type }: { type: string }) => {
     vapi.on("error", onError);
 
     return () => {
-      vapi.off("call-start", onCallStart);
-      vapi.off("call-end", onCallEnd);
-      vapi.off("message", onMessage);
-      vapi.off("speech-start", onSpeechStart);
-      vapi.off("speech-end", onSpeechEnd);
-      vapi.off("error", onError);
+      vapi.removeAllListeners();
+      // vapi.off("call-start", onCallStart);
+      // vapi.off("call-end", onCallEnd);
+      // vapi.off("message", onMessage);
+      // vapi.off("speech-start", onSpeechStart);
+      // vapi.off("speech-end", onSpeechEnd);
+      // vapi.off("error", onError);
     };
   }, []);
 
