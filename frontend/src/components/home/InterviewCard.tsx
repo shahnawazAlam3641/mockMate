@@ -1,4 +1,3 @@
-import React from "react";
 import { motion } from "framer-motion";
 import { Clock, Users, Code, Award } from "lucide-react";
 import { Interview } from "../../redux/slices/interviewSlice";

@@ -54,15 +54,13 @@ const SignUp = () => {
         password: formData.password,
       });
 
-      console.log(response);
-
       // const userData = await signUp(
       //   formData.name,
       //   formData.email,
       //   formData.password
       // );
       dispatch(registerSuccess(response.data.user));
-      // navigate("/");
+      navigate("/");
     } catch (err: any) {
       console.log(err);
       dispatch(registerFailure(err.response.data.message));

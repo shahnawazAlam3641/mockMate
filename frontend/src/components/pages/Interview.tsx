@@ -173,8 +173,8 @@ const Interview = ({ type }: { type: string }) => {
     vapi.stop();
   };
 
-  const isCallInactiveOrFinished =
-    callStatus === CallStatus.INACTIVE || callStatus === CallStatus.FINISHED;
+  // const isCallInactiveOrFinished =
+  //   callStatus === CallStatus.INACTIVE || callStatus === CallStatus.FINISHED;
 
   if (currentInterviewLoading || loading) {
     return (
@@ -247,7 +247,8 @@ const Interview = ({ type }: { type: string }) => {
 
                   <ControlPanel
                     onEndInterview={handleDisconnect}
-                    isComplete={callStatus === CallStatus.FINISHED}
+                    // isComplete={callStatus === CallStatus.FINISHED} --> for now
+                    isComplete={loading}
                   />
                 </div>
               ) : (
