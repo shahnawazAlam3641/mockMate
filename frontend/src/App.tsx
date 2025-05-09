@@ -6,6 +6,7 @@ import SignIn from "./components/pages/SignIn";
 import SignUp from "./components/pages/SignUp";
 import Interview from "./components/pages/Interview";
 import Feedback from "./components/pages/Feedback";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
@@ -18,17 +19,17 @@ function App() {
           <Route
             path="interview/:id"
             element={
-              // <ProtectedRoute>
-              <Interview type="interview" />
-              // </ProtectedRoute>
+              <ProtectedRoute>
+                <Interview type="interview" />
+              </ProtectedRoute>
             }
           />
           <Route
             path="feedback/:id"
             element={
-              // <ProtectedRoute>
-              <Feedback />
-              // </ProtectedRoute>
+              <ProtectedRoute>
+                <Feedback />
+              </ProtectedRoute>
             }
           />
           <Route path="*" element={<Navigate to="/" replace />} />
