@@ -60,11 +60,6 @@ const CreateInterviewModal: React.FC<CreateInterviewModalProps> = ({
     try {
       dispatch(createInterviewStart());
 
-      // Convert techStack string to array
-      // const techStackArray = formData.techStack
-      //   .split(",")
-      //   .map((item) => item.trim());
-
       const response = await axios.post(
         `${BACKEND_URL}/interview/generateInterview`,
         { ...formData, userid: user?._id },
@@ -105,7 +100,7 @@ const CreateInterviewModal: React.FC<CreateInterviewModalProps> = ({
       {isOpen && (
         <>
           <motion.div
-            className="fixed inset-0 bg-black bg-opacity-50 z-40"
+            className="fixed inset-0 bg-[#000000f0] bg-opacity-50 z-40"
             variants={overlayVariants}
             initial="hidden"
             animate="visible"
@@ -147,7 +142,7 @@ const CreateInterviewModal: React.FC<CreateInterviewModalProps> = ({
                       How would you like to create your interview?
                     </p>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                       <motion.button
                         whileHover={{ scale: 1.03 }}
                         whileTap={{ scale: 0.98 }}
@@ -165,7 +160,8 @@ const CreateInterviewModal: React.FC<CreateInterviewModalProps> = ({
                         </p>
                       </motion.button>
 
-                      <motion.button
+                      {/* future update */}
+                      {/* <motion.button
                         whileHover={{ scale: 1.03 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={() => setStep("chat")}
@@ -180,7 +176,7 @@ const CreateInterviewModal: React.FC<CreateInterviewModalProps> = ({
                         <p className="text-sm text-gray-500 dark:text-gray-400 text-center mt-2">
                           Let our AI help you build your interview
                         </p>
-                      </motion.button>
+                      </motion.button> */}
                     </div>
                   </div>
                 )}
