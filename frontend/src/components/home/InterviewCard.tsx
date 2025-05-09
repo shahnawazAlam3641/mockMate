@@ -93,7 +93,7 @@ const InterviewCard = ({ interview, onClick }: InterviewCardProps) => {
           ))}
         </div>
 
-        <div className="space-y-2 text-sm text-gray-600">
+        <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
           <div className="flex items-center">
             <Clock className="w-4 h-4 mr-2" />
             <span>Estimated time: {numberOfQuestions * 3} min</span>

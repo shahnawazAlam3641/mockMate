@@ -98,14 +98,14 @@ const Feedback = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen  py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="bg-white shadow-md rounded-xl overflow-hidden">
+          <div className=" shadow-md dark:border border-gray-700 rounded-xl overflow-hidden">
             <FeedbackHeader />
 
             <div className="p-6">

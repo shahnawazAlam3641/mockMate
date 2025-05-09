@@ -12,7 +12,7 @@ const ControlPanel = ({ onEndInterview, isComplete }: ControlPanelProps) => {
   const [isVideoOff, setIsVideoOff] = React.useState(false);
 
   return (
-    <div className="flex flex-col md:flex-row items-center justify-between p-4 bg-gray-100 rounded-lg">
+    <div className="flex flex-col md:flex-row items-center justify-between p-4  rounded-lg">
       <div className="flex space-x-3 mb-4 md:mb-0">
         <motion.button
           whileHover={{ scale: 1.05 }}

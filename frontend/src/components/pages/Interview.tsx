@@ -203,7 +203,7 @@ const Interview = ({ type }: { type: string }) => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen  py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -222,7 +222,7 @@ const Interview = ({ type }: { type: string }) => {
               </p>
             </div>
 
-            <div className="p-6">
+            <div className="p-6 dark:bg-gray-800">
               {callStatus === CallStatus.ACTIVE ? (
                 <div className="space-y-8">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -254,10 +254,10 @@ const Interview = ({ type }: { type: string }) => {
                 </div>
               ) : (
                 <div className="text-center py-10">
-                  <h3 className="text-xl font-semibold mb-4">
+                  <h3 className="text-xl font-semibold mb-4 ">
                     Ready to begin your interview?
                   </h3>
-                  <p className="text-gray-600 mb-8 max-w-lg mx-auto">
+                  <p className="mb-8 max-w-lg mx-auto">
                     We'll simulate a real interview experience with our AI
                     interviewer. Your responses will be evaluated and you'll
                     receive detailed feedback.

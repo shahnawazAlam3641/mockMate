@@ -6,13 +6,13 @@ const FinalAssessment = ({ assessment }: { assessment: string }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.5 }}
-      className="bg-primary-50 border border-primary-100 rounded-lg p-6 mt-8"
+      className=" border border-primary-100 dark:border-gray-700 rounded-lg p-6 mt-8"
     >
-      <h3 className="text-xl font-semibold text-primary-900 mb-4">
+      <h3 className="text-xl font-semibold text-primary-900 dark:text-white mb-4">
         Final Assessment
       </h3>
 
-      <div className="prose prose-primary max-w-none text-primary-900">
+      <div className="prose prose-primary max-w-none text-primary-900 dark:text-white">
         <p>{assessment}</p>
       </div>
 

@@ -16,10 +16,10 @@ const CategoryScore = ({ name, score, comment }: CategoryScoreProps) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-4 h-full">
+    <div className="rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 p-4 h-full">
       <div className="flex justify-between items-center mb-3">
-        <h4 className="text-lg font-semibold text-gray-800">{name}</h4>
-        <div className="flex items-center bg-gray-100 rounded-full px-3 py-1">
+        <h4 className="text-lg font-semibold ">{name}</h4>
+        <div className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-full px-3 py-1">
           <div
             className={`w-3 h-3 rounded-full ${getScoreColor(score)} mr-2`}
           ></div>
@@ -27,7 +27,7 @@ const CategoryScore = ({ name, score, comment }: CategoryScoreProps) => {
         </div>
       </div>
 
-      <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
+      <div className="w-full bg-gray-200 dark:bg-gray-800  rounded-full h-2 mb-4">
         <motion.div
           initial={{ width: 0 }}
           animate={{ width: `${score}%` }}
@@ -36,7 +36,7 @@ const CategoryScore = ({ name, score, comment }: CategoryScoreProps) => {
         ></motion.div>
       </div>
 
-      <p className="text-gray-600 text-sm">{comment}</p>
+      <p className=" text-sm">{comment}</p>
     </div>
   );
 };

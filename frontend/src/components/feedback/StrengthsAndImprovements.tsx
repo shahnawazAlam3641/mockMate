@@ -17,13 +17,13 @@ const StrengthsAndImprovements = ({
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="bg-success-50 border border-success-100 rounded-lg p-6"
+          className="bg-success-50 dark:bg-gray-900 border border-success-100 dark:border-gray-700 rounded-lg p-6"
         >
           <div className="flex items-center mb-4">
             <div className="bg-success-100 p-2 rounded-lg mr-3">
-              <ThumbsUp className="h-5 w-5 text-success-700" />
+              <ThumbsUp className="h-5 w-5 text-success-700 dark:text-gray-900" />
             </div>
-            <h3 className="text-xl font-semibold text-success-900">
+            <h3 className="text-xl font-semibold text-success-900 dark:text-white">
               Strengths
             </h3>
           </div>
@@ -38,7 +38,7 @@ const StrengthsAndImprovements = ({
                 className="flex items-start"
               >
                 <svg
-                  className="h-5 w-5 text-success-600 mr-2 mt-0.5 flex-shrink-0"
+                  className="h-5 w-5 text-success-600 dark:text-white mr-2 mt-0.5 flex-shrink-0"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -48,7 +48,9 @@ const StrengthsAndImprovements = ({
                     clipRule="evenodd"
                   />
                 </svg>
-                <span className="text-success-900">{strength}</span>
+                <span className="text-success-900 dark:text-white">
+                  {strength}
+                </span>
               </motion.li>
             ))}
           </ul>
@@ -59,13 +61,13 @@ const StrengthsAndImprovements = ({
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5, delay: 0.3 }}
-        className="bg-warning-50 border border-warning-100 rounded-lg p-6"
+        className="bg-warning-50 dark:bg-gray-900 border border-warning-100 dark:border-gray-700 rounded-lg p-6"
       >
         <div className="flex items-center mb-4">
           <div className="bg-warning-100 p-2 rounded-lg mr-3">
-            <AlertTriangle className="h-5 w-5 text-warning-700" />
+            <AlertTriangle className="h-5 w-5 text-warning-700 dark:text-gray-900" />
           </div>
-          <h3 className="text-xl font-semibold text-warning-900">
+          <h3 className="text-xl font-semibold text-warning-900 dark:text-white">
             Areas for Improvement
           </h3>
         </div>
@@ -80,7 +82,7 @@ const StrengthsAndImprovements = ({
               className="flex items-start"
             >
               <svg
-                className="h-5 w-5 text-warning-600 mr-2 mt-0.5 flex-shrink-0"
+                className="h-5 w-5 text-warning-600 dark:text-white mr-2 mt-0.5 flex-shrink-0"
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >
@@ -90,7 +92,7 @@ const StrengthsAndImprovements = ({
                   clipRule="evenodd"
                 />
               </svg>
-              <span className="text-warning-900">{area}</span>
+              <span className="text-warning-900 dark:text-white">{area}</span>
             </motion.li>
           ))}
         </ul>

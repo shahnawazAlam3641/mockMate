@@ -15,9 +15,7 @@ const InterviewBox = ({
 }: InterviewBoxProps) => {
   return (
     <div
-      className={`bg-gray-100 rounded-lg flex flex-col items-center justify-center py-8 px-4 ${
-        type === "interviewer" ? "bg-primary-50" : "bg-secondary-50"
-      }`}
+      className={` rounded-lg flex flex-col items-center justify-center py-8 px-4 border-2 border-gray-200 dark:border-gray-700`}
     >
       <div className="relative">
         {isActive && (
@@ -69,13 +67,7 @@ const InterviewBox = ({
       </p>
 
       <div
-        className={`mt-4 w-full max-w-xs p-3 rounded-md ${
-          isActive
-            ? type === "interviewer"
-              ? "bg-primary-100 text-primary-800"
-              : "bg-secondary-100 text-secondary-800"
-            : "bg-gray-200 text-gray-500"
-        }`}
+        className={`mt-4 w-full max-w-xs p-3 rounded-md border border-gray-200 dark:border-gray-700`}
       >
         <div className="flex items-center justify-center space-x-2">
           <div

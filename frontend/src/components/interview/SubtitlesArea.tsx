@@ -7,7 +7,7 @@ interface SubtitlesAreaProps {
 
 const SubtitlesArea = ({ currentSubtitle, isSpeaking }: SubtitlesAreaProps) => {
   return (
-    <div className="w-full border border-gray-200 bg-white rounded-lg p-4 min-h-[100px] flex items-center justify-center">
+    <div className="w-full border border-gray-200 dark:border-gray-700 rounded-lg p-4 min-h-[100px] flex items-center justify-center">
       <AnimatePresence mode="wait">
         {isSpeaking && (
           <motion.div
@@ -22,13 +22,7 @@ const SubtitlesArea = ({ currentSubtitle, isSpeaking }: SubtitlesAreaProps) => {
               {isSpeaking ? "AI Interviewer is " : "You are "}
               speaking:
             </p>
-            <p
-              className={`text-lg ${
-                isSpeaking ? "text-primary-700" : "text-secondary-700"
-              }`}
-            >
-              {currentSubtitle}
-            </p>
+            <p className={`text-lg `}>{currentSubtitle}</p>
           </motion.div>
         )}
         {/* {!activeSpeaker && (
