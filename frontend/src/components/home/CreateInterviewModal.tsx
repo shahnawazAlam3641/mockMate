@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
-import { X, MessageCircle, FileText } from "lucide-react";
+import { X,  FileText } from "lucide-react";
 import {
   createInterviewStart,
   createInterviewSuccess,
