@@ -15,17 +15,18 @@ const Hero: React.FC<HeroProps> = ({ onCreateInterview }) => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className=" items-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
+            className="flex justify-center items-center flex-col"
           >
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="flex items-center mb-6"
+              className="flex items-center mb-6 text-center"
             >
               <div className="bg-white bg-opacity-10 p-3 rounded-lg">
                 <Cpu className="w-6 h-6 text-primary-200" />
@@ -39,10 +40,10 @@ const Hero: React.FC<HeroProps> = ({ onCreateInterview }) => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
-              className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold text-white leading-tight mb-6"
+              className="text-4xl md:text-5xl text-center lg:text-6xl font-heading font-bold text-white leading-tight mb-6"
             >
               Crack Interviews with{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-secondary-400 to-accent-400">
+              <span className="text-transparent bg-clip-text text-center bg-gradient-to-r from-secondary-400 to-accent-400">
                 AI Precision
               </span>
             </motion.h1>
@@ -51,7 +52,7 @@ const Hero: React.FC<HeroProps> = ({ onCreateInterview }) => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.4 }}
-              className="text-lg text-primary-100 mb-8 max-w-lg"
+              className="text-lg text-primary-100 mb-8 max-w-lg text-center"
             >
               Practice with our AI interviewer and get instant feedback to
               improve your skills. Tailored for technical and behavioral
@@ -73,47 +74,10 @@ const Hero: React.FC<HeroProps> = ({ onCreateInterview }) => {
                 Create Interview
                 <ArrowRight className="ml-2 h-5 w-5" />
               </motion.button>
-              <button className="btn bg-transparent border border-primary-200 text-white hover:bg-white hover:bg-opacity-10 px-8 py-3 rounded-md">
+              <button className="btn bg-transparent border border-primary-200 text-white hover:bg-white hover:text-black hover:bg-opacity-10 px-8 py-3 rounded-md">
                 Learn More
               </button>
             </motion.div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
-            className="hidden lg:block"
-          >
-            <div className="relative rounded-xl overflow-hidden shadow-2xl bg-gray-800 aspect-video">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary-800/50 to-gray-900/90 z-10"></div>
-              <div className="absolute inset-0 flex items-center justify-center z-20">
-                <div className="text-center">
-                  <div className="flex justify-center mb-4">
-                    <div className="w-16 h-16 rounded-full bg-accent-500 flex items-center justify-center">
-                      <svg
-                        width="32"
-                        height="32"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path d="M5 3L19 12L5 21V3Z" fill="white" />
-                      </svg>
-                    </div>
-                  </div>
-                  <h3 className="text-xl font-medium text-white mb-2">
-                    See How It Works
-                  </h3>
-                  <p className="text-primary-200">Watch a 2-minute demo</p>
-                </div>
-              </div>
-              <img
-                src=""
-                alt="Interview demonstration"
-                className="w-full h-full object-cover"
-              />
-            </div>
           </motion.div>
         </div>
       </div>
