@@ -20,9 +20,8 @@ app.use(
   })
 );
 
-app.get("/", (req, res): void => {
-  res.json({ message: "working" });
-  return;
+app.get("/api/v1/ping", (req, res) => {
+  res.send("Pong");
 });
 
 app.use("/api/v1/auth", authRoutes);
